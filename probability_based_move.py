@@ -106,11 +106,12 @@ def next_room_prob(self, x, y):
         return logic_based_check
     else:
         #get query rooms
-        surrounding = self.getsurronding(x,y)
+        surrounding = self.cave.getsurrounding(x,y)
         for each in self.visited_rooms:
             if each in surrounding:
-                query = surrounding.remove(each)
-        
+                surrounding.remove(each)
+        query = surrounding
+        print(query)
         #get unknowns
         all_rooms = []
         for column in range(1, 5):
@@ -123,7 +124,7 @@ def next_room_prob(self, x, y):
         unknowns = all_rooms
 
         #get BS_known
-        BS_known = self.observation_breeze_stench(self,self.visited_rooms)
+        BS_known = self.observation_breeze_stench(self.visited_rooms)
 
 
 
@@ -135,11 +136,11 @@ def next_room_prob(self, x, y):
 
         #calculate 𝜬(𝐵𝑆_𝑘𝑛𝑜𝑤𝑛 |𝑃𝑞,𝑃𝑊_𝑘𝑛𝑜𝑤𝑛,𝑦)
         P_sum = 0
-        evidence = self.observation_pits(self,self.visited_rooms)
+        evidence = self.observation_pits(self.visited_rooms)
         for each in unknowns:
             events = all_events_jpd(self.PW_variables,self.jdP_PWs, evidence)
             for each_event in events:
-                P_sum += self.consistent(self,BS_known,each_event)
+                P_sum += self.consistent(BS_known,each_event)
         
         #calculate P
         p = P_sum * 0.2
@@ -147,7 +148,10 @@ def next_room_prob(self, x, y):
 
 
 
-        return (0,0)
+
+
+        print(query)
+        return query[0]
 
     
 
