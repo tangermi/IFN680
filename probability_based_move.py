@@ -72,9 +72,9 @@ def PitWumpus_probability_distribution(self, width, height):
         # Assign the probability to this event
         JPD[each_event]= prob
     
-    for each in self.PW_variables:
-        p = enumerate_joint_ask(each, {}, JPD)
-        print(each,  p.show_approx())
+    #for each in self.PW_variables:
+        #p = enumerate_joint_ask(each, {}, JPD)
+        #print(each,  p.show_approx())
 
     return JPD
                 
@@ -105,16 +105,53 @@ def next_room_prob(self, x, y):
     if  logic_based_check != (0,0):
         return logic_based_check
     else:
+        #get query rooms
+        surrounding = self.getsurronding(x,y)
+        for each in self.visited_rooms:
+            if each in surrounding:
+                query = surrounding.remove(each)
+        
+        #get unknowns
+        all_rooms = []
+        for column in range(1, 5):
+            for row in range(1, 5):
+                all_rooms.append((column,row))
+        for each in self.visited_rooms:
+            all_rooms.remove(each)
+        for each in query:
+            all_rooms.remove(each)
+        unknowns = all_rooms
+
+        #get BS_known
+        BS_known = self.observation_breeze_stench(self,self.visited_rooms)
+
+
+
+
+        #calculate 𝛼
+
+        #get events
+        #events = all_events_jpd(self.PW_variables, self.jdP_PWs, {})
+
+        #calculate 𝜬(𝐵𝑆_𝑘𝑛𝑜𝑤𝑛 |𝑃𝑞,𝑃𝑊_𝑘𝑛𝑜𝑤𝑛,𝑦)
+        P_sum = 0
+        evidence = self.observation_pits(self,self.visited_rooms)
+        for each in unknowns:
+            events = all_events_jpd(self.PW_variables,self.jdP_PWs, evidence)
+            for each_event in events:
+                P_sum += self.consistent(self,BS_known,each_event)
+        
+        #calculate P
+        p = P_sum * 0.2
+        print(p)
+
+
+
         return (0,0)
 
-    #get query rooms
-    self.current_position
-    surrounding = self.getsurronding(self.current_position)
-    for each in self.visited_rooms:
-        if each in surrounding:
-            surrounding.remove(each)
     
-    #
+
+            
 
 
 
